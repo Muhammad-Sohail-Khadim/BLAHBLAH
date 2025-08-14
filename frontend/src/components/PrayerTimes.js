@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Sun, Moon, Sunrise, Sunset } from 'lucide-react';
-import { mockPrayerTimes } from '../services/mockData';
+import { Clock, Sun, Moon, Sunrise, Sunset, Loader2 } from 'lucide-react';
+import { prayerTimesAPI } from '../services/api';
+import { useToast } from '../hooks/use-toast';
 
 const PrayerTimes = ({ location }) => {
   const [prayerTimes, setPrayerTimes] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [nextPrayer, setNextPrayer] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Update current time every minute
@@ -18,9 +22,7 @@ const PrayerTimes = ({ location }) => {
 
   useEffect(() => {
     if (location) {
-      // For now, use mock data. Later this will be replaced with real API calls
-      const times = mockPrayerTimes.getTodaysPrayerTimes(location);
-      setPrayerTimes(times);
+      fetchPrayerTimes();
     }
   }, [location]);
 
@@ -31,13 +33,40 @@ const PrayerTimes = ({ location }) => {
     }
   }, [prayerTimes, currentTime]);
 
+  const fetchPrayerTimes = async () => {
+    if (!location) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const data = await prayerTimesAPI.getTodaysTimes(location.latitude, location.longitude);
+      setPrayerTimes(data);
+      
+      toast({
+        title: "Prayer times updated",
+        description: `Using ${data.method} calculation method`,
+      });
+      
+    } catch (err) {
+      setError(err.message);
+      toast({
+        title: "Prayer Times Error",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const findNextPrayer = (times, now) => {
     const prayers = [
-      { name: 'Fajr', time: times.fajr },
-      { name: 'Dhuhr', time: times.dhuhr },
-      { name: 'Asr', time: times.asr },
-      { name: 'Maghrib', time: times.maghrib },
-      { name: 'Isha', time: times.isha }
+      { name: 'Fajr', time: times.times.fajr },
+      { name: 'Dhuhr', time: times.times.dhuhr },
+      { name: 'Asr', time: times.times.asr },
+      { name: 'Maghrib', time: times.times.maghrib },
+      { name: 'Isha', time: times.times.isha }
     ];
 
     const nowMinutes = now.getHours() * 60 + now.getMinutes();
@@ -101,11 +130,11 @@ const PrayerTimes = ({ location }) => {
     if (!prayerTimes) return false;
     
     const prayers = [
-      { name: 'Fajr', time: prayerTimes.fajr },
-      { name: 'Dhuhr', time: prayerTimes.dhuhr },
-      { name: 'Asr', time: prayerTimes.asr },
-      { name: 'Maghrib', time: prayerTimes.maghrib },
-      { name: 'Isha', time: prayerTimes.isha }
+      { name: 'Fajr', time: prayerTimes.times.fajr },
+      { name: 'Dhuhr', time: prayerTimes.times.dhuhr },
+      { name: 'Asr', time: prayerTimes.times.asr },
+      { name: 'Maghrib', time: prayerTimes.times.maghrib },
+      { name: 'Isha', time: prayerTimes.times.isha }
     ];
 
     const nowMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
@@ -128,6 +157,34 @@ const PrayerTimes = ({ location }) => {
     
     return false;
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-gray-500 text-center">
+          <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin" />
+          <p>Fetching prayer times...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8">
+        <div className="text-red-500 text-center mb-4">
+          <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
+          <p className="text-sm">{error}</p>
+        </div>
+        <button 
+          onClick={fetchPrayerTimes}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   if (!prayerTimes) {
     return (
@@ -165,11 +222,11 @@ const PrayerTimes = ({ location }) => {
       {/* Prayer Times List */}
       <div className="space-y-2">
         {[
-          { name: 'Fajr', time: prayerTimes.fajr, color: 'text-blue-600' },
-          { name: 'Dhuhr', time: prayerTimes.dhuhr, color: 'text-yellow-600' },
-          { name: 'Asr', time: prayerTimes.asr, color: 'text-orange-600' },
-          { name: 'Maghrib', time: prayerTimes.maghrib, color: 'text-red-600' },
-          { name: 'Isha', time: prayerTimes.isha, color: 'text-purple-600' }
+          { name: 'Fajr', time: prayerTimes.times.fajr, color: 'text-blue-600' },
+          { name: 'Dhuhr', time: prayerTimes.times.dhuhr, color: 'text-yellow-600' },
+          { name: 'Asr', time: prayerTimes.times.asr, color: 'text-orange-600' },
+          { name: 'Maghrib', time: prayerTimes.times.maghrib, color: 'text-red-600' },
+          { name: 'Isha', time: prayerTimes.times.isha, color: 'text-purple-600' }
         ].map((prayer) => (
           <div 
             key={prayer.name}
@@ -199,7 +256,7 @@ const PrayerTimes = ({ location }) => {
         ))}
       </div>
 
-      {/* Today's Date */}
+      {/* Today's Date & Method */}
       <div className="text-center pt-4 border-t border-gray-200">
         <p className="text-sm text-gray-500">
           {currentTime.toLocaleDateString('en-US', { 
@@ -210,7 +267,7 @@ const PrayerTimes = ({ location }) => {
           })}
         </p>
         <p className="text-xs text-gray-400 mt-1">
-          Times calculated for your location
+          {prayerTimes.method} • {prayerTimes.timezone}
         </p>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import QiblaCompass from "./components/QiblaCompass";
 import PrayerTimes from "./components/PrayerTimes";
 import LocationService from "./services/LocationService";
+import { qiblaAPI } from "./services/api";
 import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { MapPin, Compass, Clock, Loader2 } from "lucide-react";
@@ -35,17 +36,32 @@ const Home = () => {
       
       setLocation(userLocation);
       
-      // Calculate Qibla direction
-      const direction = LocationService.calculateQiblaDirection(
-        userLocation.latitude, 
-        userLocation.longitude
-      );
-      setQiblaDirection(direction);
-      
-      toast({
-        title: "Location found",
-        description: `Accuracy: ${Math.round(userLocation.accuracy)}m`,
-      });
+      // Get Qibla direction from backend API
+      try {
+        const qiblaData = await qiblaAPI.getQiblaDirection(
+          userLocation.latitude, 
+          userLocation.longitude
+        );
+        setQiblaDirection(qiblaData.qibla_direction);
+        
+        toast({
+          title: "Location found",
+          description: `Accuracy: ${Math.round(userLocation.accuracy)}m`,
+        });
+      } catch (qiblaError) {
+        console.warn('Backend Qibla API failed, using local calculation:', qiblaError.message);
+        // Fallback to local calculation
+        const direction = LocationService.calculateQiblaDirection(
+          userLocation.latitude, 
+          userLocation.longitude
+        );
+        setQiblaDirection(direction);
+        
+        toast({
+          title: "Location found",
+          description: `Using offline Qibla calculation`,
+        });
+      }
       
     } catch (err) {
       setError(err.message);
