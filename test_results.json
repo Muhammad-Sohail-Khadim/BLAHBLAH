@@ -1,0 +1,175 @@
+{
+  "summary": {
+    "total_tests": 20,
+    "passed": 13,
+    "failed": 7,
+    "success_rate": 65.0
+  },
+  "results": [
+    {
+      "test": "Valid coordinates - Today's prayer times",
+      "success": false,
+      "message": "\u274c Expected 200, got 500 | Error: Internal server error",
+      "timestamp": "2025-08-14T16:04:49.457365"
+    },
+    {
+      "test": "Valid coordinates - Weekly prayer times",
+      "success": false,
+      "message": "\u274c Expected 200, got 500 | Error: Internal server error",
+      "timestamp": "2025-08-14T16:04:49.685246"
+    },
+    {
+      "test": "Valid coordinates - Qibla direction",
+      "success": true,
+      "message": "\u2705 Status 200 | Qibla: 58.5\u00b0, Distance: 10306.3km",
+      "timestamp": "2025-08-14T16:04:49.739039"
+    },
+    {
+      "test": "Mecca coordinates - Today's prayer times",
+      "success": false,
+      "message": "\u274c Expected 200, got 500 | Error: Internal server error",
+      "timestamp": "2025-08-14T16:04:50.017447"
+    },
+    {
+      "test": "Mecca coordinates - Weekly prayer times",
+      "success": false,
+      "message": "\u274c Expected 200, got 500 | Error: Internal server error",
+      "timestamp": "2025-08-14T16:04:50.244808"
+    },
+    {
+      "test": "Mecca coordinates - Qibla direction",
+      "success": true,
+      "message": "\u2705 Status 200 | Qibla: 0.0\u00b0, Distance: 0.0km",
+      "timestamp": "2025-08-14T16:04:50.296164"
+    },
+    {
+      "test": "Invalid coordinates - Prayer times (Latitude > 90)",
+      "success": true,
+      "message": "\u2705 Status 400",
+      "timestamp": "2025-08-14T16:04:50.348712"
+    },
+    {
+      "test": "Invalid coordinates - Qibla (Latitude > 90)",
+      "success": true,
+      "message": "\u2705 Status 400",
+      "timestamp": "2025-08-14T16:04:50.403151"
+    },
+    {
+      "test": "Invalid coordinates - Prayer times (Latitude < -90)",
+      "success": true,
+      "message": "\u2705 Status 400",
+      "timestamp": "2025-08-14T16:04:50.458516"
+    },
+    {
+      "test": "Invalid coordinates - Qibla (Latitude < -90)",
+      "success": true,
+      "message": "\u2705 Status 400",
+      "timestamp": "2025-08-14T16:04:50.514636"
+    },
+    {
+      "test": "Invalid coordinates - Prayer times (Longitude > 180)",
+      "success": true,
+      "message": "\u2705 Status 400",
+      "timestamp": "2025-08-14T16:04:50.571496"
+    },
+    {
+      "test": "Invalid coordinates - Qibla (Longitude > 180)",
+      "success": true,
+      "message": "\u2705 Status 400",
+      "timestamp": "2025-08-14T16:04:50.636624"
+    },
+    {
+      "test": "Invalid coordinates - Prayer times (Longitude < -180)",
+      "success": true,
+      "message": "\u2705 Status 400",
+      "timestamp": "2025-08-14T16:04:50.689159"
+    },
+    {
+      "test": "Invalid coordinates - Qibla (Longitude < -180)",
+      "success": true,
+      "message": "\u2705 Status 400",
+      "timestamp": "2025-08-14T16:04:50.746989"
+    },
+    {
+      "test": "Invalid coordinates - Prayer times (Both coordinates invalid)",
+      "success": true,
+      "message": "\u2705 Status 400",
+      "timestamp": "2025-08-14T16:04:50.797764"
+    },
+    {
+      "test": "Invalid coordinates - Qibla (Both coordinates invalid)",
+      "success": true,
+      "message": "\u2705 Status 400",
+      "timestamp": "2025-08-14T16:04:50.846524"
+    },
+    {
+      "test": "Qibla response format",
+      "success": true,
+      "message": "Direction: 58.5 (valid: True), Distance: 10306.3 (valid: True)",
+      "timestamp": "2025-08-14T16:04:51.344463"
+    },
+    {
+      "test": "Qibla calculation accuracy - New York",
+      "success": false,
+      "message": "Direction: 58.5\u00b0 (expected: (58, 62)), Distance: 10306.3km (expected: (11000, 12000))",
+      "timestamp": "2025-08-14T16:04:51.393756"
+    },
+    {
+      "test": "Qibla calculation accuracy - London",
+      "success": false,
+      "message": "Direction: 119.0\u00b0 (expected: (118, 122)), Distance: 4793.8km (expected: (5500, 6000))",
+      "timestamp": "2025-08-14T16:04:51.460737"
+    },
+    {
+      "test": "Qibla calculation accuracy - Sydney",
+      "success": false,
+      "message": "Direction: 277.5\u00b0 (expected: (277, 282)), Distance: 13236.3km (expected: (14000, 15000))",
+      "timestamp": "2025-08-14T16:04:51.513785"
+    }
+  ],
+  "failed_tests": [
+    {
+      "test": "Valid coordinates - Today's prayer times",
+      "success": false,
+      "message": "\u274c Expected 200, got 500 | Error: Internal server error",
+      "timestamp": "2025-08-14T16:04:49.457365"
+    },
+    {
+      "test": "Valid coordinates - Weekly prayer times",
+      "success": false,
+      "message": "\u274c Expected 200, got 500 | Error: Internal server error",
+      "timestamp": "2025-08-14T16:04:49.685246"
+    },
+    {
+      "test": "Mecca coordinates - Today's prayer times",
+      "success": false,
+      "message": "\u274c Expected 200, got 500 | Error: Internal server error",
+      "timestamp": "2025-08-14T16:04:50.017447"
+    },
+    {
+      "test": "Mecca coordinates - Weekly prayer times",
+      "success": false,
+      "message": "\u274c Expected 200, got 500 | Error: Internal server error",
+      "timestamp": "2025-08-14T16:04:50.244808"
+    },
+    {
+      "test": "Qibla calculation accuracy - New York",
+      "success": false,
+      "message": "Direction: 58.5\u00b0 (expected: (58, 62)), Distance: 10306.3km (expected: (11000, 12000))",
+      "timestamp": "2025-08-14T16:04:51.393756"
+    },
+    {
+      "test": "Qibla calculation accuracy - London",
+      "success": false,
+      "message": "Direction: 119.0\u00b0 (expected: (118, 122)), Distance: 4793.8km (expected: (5500, 6000))",
+      "timestamp": "2025-08-14T16:04:51.460737"
+    },
+    {
+      "test": "Qibla calculation accuracy - Sydney",
+      "success": false,
+      "message": "Direction: 277.5\u00b0 (expected: (277, 282)), Distance: 13236.3km (expected: (14000, 15000))",
+      "timestamp": "2025-08-14T16:04:51.513785"
+    }
+  ],
+  "timestamp": "2025-08-14T16:04:51.514105"
+}
