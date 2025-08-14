@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Sun, Moon, Sunrise, Sunset, Loader2 } from 'lucide-react';
+import { Clock, Sun, Moon, Sunrise, Sunset, Loader2, Bell, Calendar } from 'lucide-react';
 import { prayerTimesAPI } from '../services/api';
 import { useToast } from '../hooks/use-toast';
 
@@ -118,6 +118,17 @@ const PrayerTimes = ({ location }) => {
     }
   };
 
+  const getPrayerGradient = (prayerName) => {
+    switch (prayerName.toLowerCase()) {
+      case 'fajr': return 'from-blue-500 to-indigo-600';
+      case 'dhuhr': return 'from-yellow-500 to-orange-600';
+      case 'asr': return 'from-orange-500 to-red-500';
+      case 'maghrib': return 'from-red-500 to-pink-600';
+      case 'isha': return 'from-purple-500 to-indigo-600';
+      default: return 'from-gray-500 to-gray-600';
+    }
+  };
+
   const formatTime = (time24) => {
     const [hours, minutes] = time24.split(':');
     const hour12 = parseInt(hours) > 12 ? parseInt(hours) - 12 : parseInt(hours);
@@ -160,10 +171,13 @@ const PrayerTimes = ({ location }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-gray-500 text-center">
-          <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin" />
-          <p>Fetching prayer times...</p>
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="p-4 bg-white/10 rounded-2xl mb-4 inline-block">
+            <Loader2 className="w-8 h-8 animate-spin text-emerald-400" />
+          </div>
+          <p className="text-white font-medium">Fetching prayer times...</p>
+          <p className="text-gray-400 text-sm mt-1">Connecting to prayer service</p>
         </div>
       </div>
     );
@@ -171,14 +185,14 @@ const PrayerTimes = ({ location }) => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-8">
-        <div className="text-red-500 text-center mb-4">
-          <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">{error}</p>
+      <div className="text-center py-8">
+        <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-2xl mb-4">
+          <Clock className="w-8 h-8 text-red-400 mx-auto mb-2" />
+          <p className="text-red-300 font-medium text-sm">{error}</p>
         </div>
         <button 
           onClick={fetchPrayerTimes}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+          className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-emerald-500/25 transition-all duration-300"
         >
           Try Again
         </button>
@@ -188,87 +202,106 @@ const PrayerTimes = ({ location }) => {
 
   if (!prayerTimes) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-gray-500 text-center">
-          <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <p>Location required for prayer times</p>
+      <div className="text-center py-12">
+        <div className="p-4 bg-white/10 rounded-2xl mb-4 inline-block">
+          <Clock className="w-8 h-8 text-gray-400" />
         </div>
+        <p className="text-white font-medium">Location Required</p>
+        <p className="text-gray-400 text-sm mt-1">Enable location access to view prayer times</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {/* Next Prayer Alert */}
+    <div className="space-y-6">
+      {/* Next Prayer Alert - Modern Design */}
       {nextPrayer && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center gap-3">
-            <div className="text-blue-600">
-              {getPrayerIcon(nextPrayer.name)}
+        <div className="bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 rounded-2xl p-4 backdrop-blur-md">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-emerald-500/30 rounded-xl">
+              <Bell className="w-6 h-6 text-emerald-300" />
             </div>
-            <div>
-              <p className="text-sm text-blue-800 font-medium">
-                Next Prayer: {nextPrayer.name}
+            <div className="flex-1">
+              <p className="text-emerald-300 font-bold text-lg">
+                Next: {nextPrayer.name}
                 {nextPrayer.tomorrow && ' (Tomorrow)'}
               </p>
-              <p className="text-xs text-blue-600">
+              <p className="text-emerald-200 text-sm font-medium">
                 {formatTime(nextPrayer.time)} • In {nextPrayer.timeLeft}
               </p>
+            </div>
+            <div className="text-emerald-400">
+              {getPrayerIcon(nextPrayer.name)}
             </div>
           </div>
         </div>
       )}
 
-      {/* Prayer Times List */}
-      <div className="space-y-2">
+      {/* Prayer Times List - Modern Cards */}
+      <div className="space-y-3">
         {[
-          { name: 'Fajr', time: prayerTimes.times.fajr, color: 'text-blue-600' },
-          { name: 'Dhuhr', time: prayerTimes.times.dhuhr, color: 'text-yellow-600' },
-          { name: 'Asr', time: prayerTimes.times.asr, color: 'text-orange-600' },
-          { name: 'Maghrib', time: prayerTimes.times.maghrib, color: 'text-red-600' },
-          { name: 'Isha', time: prayerTimes.times.isha, color: 'text-purple-600' }
-        ].map((prayer) => (
+          { name: 'Fajr', time: prayerTimes.times.fajr },
+          { name: 'Dhuhr', time: prayerTimes.times.dhuhr },
+          { name: 'Asr', time: prayerTimes.times.asr },
+          { name: 'Maghrib', time: prayerTimes.times.maghrib },
+          { name: 'Isha', time: prayerTimes.times.isha }
+        ].map((prayer, index) => (
           <div 
             key={prayer.name}
-            className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+            className={`relative overflow-hidden rounded-2xl border transition-all duration-300 ${
               isCurrentPrayer(prayer.name) 
-                ? 'bg-green-50 border-green-200' 
-                : 'bg-gray-50 border-gray-200'
+                ? 'bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border-emerald-500/40 shadow-lg shadow-emerald-500/20' 
+                : 'bg-white/10 border-white/20 hover:bg-white/15'
             }`}
           >
-            <div className="flex items-center gap-3">
-              <div className={prayer.color}>
-                {getPrayerIcon(prayer.name)}
+            <div className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className={`p-3 rounded-xl bg-gradient-to-br ${getPrayerGradient(prayer.name)} shadow-lg`}>
+                  <div className="text-white">
+                    {getPrayerIcon(prayer.name)}
+                  </div>
+                </div>
+                <div>
+                  <p className="font-bold text-white text-lg">{prayer.name}</p>
+                  {isCurrentPrayer(prayer.name) && (
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                      <p className="text-xs text-emerald-400 font-semibold">CURRENT PRAYER</p>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div>
-                <p className="font-medium text-gray-800">{prayer.name}</p>
-                {isCurrentPrayer(prayer.name) && (
-                  <p className="text-xs text-green-600 font-medium">Current Prayer</p>
-                )}
+              <div className="text-right">
+                <p className="font-mono text-2xl font-bold text-white">
+                  {formatTime(prayer.time)}
+                </p>
               </div>
             </div>
-            <div className="text-right">
-              <p className="font-mono text-lg text-gray-800">
-                {formatTime(prayer.time)}
-              </p>
-            </div>
+            
+            {/* Decorative gradient line */}
+            <div className={`h-1 bg-gradient-to-r ${getPrayerGradient(prayer.name)}`}></div>
           </div>
         ))}
       </div>
 
-      {/* Today's Date & Method */}
-      <div className="text-center pt-4 border-t border-gray-200">
-        <p className="text-sm text-gray-500">
-          {currentTime.toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}
-        </p>
-        <p className="text-xs text-gray-400 mt-1">
-          {prayerTimes.method} • {prayerTimes.timezone}
-        </p>
+      {/* Footer Info - Modern Design */}
+      <div className="bg-white/10 border border-white/20 rounded-2xl p-4 backdrop-blur-md">
+        <div className="flex items-center gap-3 mb-3">
+          <Calendar className="w-5 h-5 text-blue-400" />
+          <div>
+            <p className="text-white font-medium">
+              {currentTime.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </p>
+            <p className="text-gray-400 text-sm">
+              {prayerTimes.method} • {prayerTimes.timezone}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
